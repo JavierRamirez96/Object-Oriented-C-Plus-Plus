@@ -75,6 +75,7 @@ bool RPG::isAlive() const
 {
     return health > 0;
 }
+
 /**
  * @brief accessor functions returns private variables
 */
@@ -100,4 +101,54 @@ int RPG::getDefense() const
 string RPG::getType() const
 {
     return type;
+}
+
+/**
+ * @brief attack decreases the opponent's health by (strength - opponent's defense)
+ * In other words, the opponent's defense should soften the blow from the attack
+ * 
+ * For example, if the opponent's health is 100, opponent's defense is 5, and player's
+ * strength is 20, then after the attack, opponent's health should be
+ * 85 (i.e. 100 - (20-5)).
+ * 
+ * @param opponent
+*/
+void RPG::attack(RPG * opponent){
+    int opp_health = (*opponent).getHealth();
+
+    int opp_def = (*opponent).getDefense();
+
+    int new_health = 0;
+
+    if(strength - opp_def > 0){
+        int new_health = opp_health - (strength - opp_def);
+        (*opponent).updateHealth(new_health);
+    }
+    else {
+        int new_health = opp_health - 0;
+        (*opponent).updateHealth(new_health);
+    }
+}
+
+/**
+ * @brief Prompts the user to choose a skill and calls printAction() and attack()
+ * 
+ * @param opponent
+*/
+void RPG::useSkill(RPG * opponent){
+    for(int i = 0; i < SKILL_SIZE; i++){
+        printf("Skill %i: %s\n", i, skills[i].c_str());
+    }
+
+    int chosen_skill_index;
+    printf("Choose a skill to use: Enter 0 or 1\n");
+
+    cin >> chosen_skill_index;
+
+    string chosen_skill = skills[chosen_skill_index];
+
+    printAction(chosen_skill, (*opponent));
+
+    attack(opponent);
+
 }
